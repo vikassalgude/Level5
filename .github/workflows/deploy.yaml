@@ -1,0 +1,30 @@
+name: Deploy Level5 App to EC2
+
+# 1. Trigger the robot whenever someone pushes code to the main branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 2. Pull your code out of GitHub repository onto the runner machine
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 3. Log into your EC2 server and run the deployment terminal commands automatically
+    - name: Executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/Level5
+          git pull origin main
+          sudo docker stop level5-container || true
+          sudo docker rm level5-container || true
+          sudo docker build -t level5 .
+          sudo docker run -d --name level5-container -p 5000:5000 level5
