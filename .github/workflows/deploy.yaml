@@ -18,9 +18,9 @@ jobs:
     - name: Executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.EC2_HOST }}
+        host: ${{ secrets.SSH_HOST  }}
         username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
+        key: ${{ secrets.SSH_KEY  }}
         script: |
           cd ~/Level5
           git pull origin main
